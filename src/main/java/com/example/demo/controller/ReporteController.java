@@ -25,7 +25,7 @@ public class ReporteController {
     }
 
     @GetMapping
-    public ResponseEntity<?> hoursReport(@RequestBody Consulta consulta){
-        return ResponseEntity.status(HttpStatus.OK).body(reporteService.getHoursReport(consulta));
+    public ResponseEntity<?> hoursReport(@RequestBody Consulta consulta1){
+        return ResponseEntity.status(HttpStatus.OK).body(reporteService.getHoursReport(consulta1));
     }
 }
