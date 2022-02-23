@@ -1,19 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.Consulta;
 import com.example.demo.entity.Reporte;
 import com.example.demo.model.HorasSemanales;
 import com.example.demo.repository.ReporteRepository;
 import org.joda.time.DateTime;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,17 +24,17 @@ public class ReporteServiceImpl implements ReporteService{
     }
 
     @Override
-    public HorasSemanales getHoursReport(Consulta consulta) {
+    public HorasSemanales getHoursReport(long tecnicoId, int semana) {
         DateTime inicio = new DateTime()
                 .withWeekyear(2022)
-                .withWeekOfWeekyear(consulta.getSemana())
+                .withWeekOfWeekyear(semana)
                 .withDayOfWeek(1)
                 .withHourOfDay(00)
                 .withMinuteOfHour(00)
                 .withSecondOfMinute(00);
         DateTime fin = new DateTime()
                 .withWeekyear(2022)
-                .withWeekOfWeekyear(consulta.getSemana())
+                .withWeekOfWeekyear(semana)
                 .withDayOfWeek(7)
                 .withHourOfDay(23)
                 .withMinuteOfHour(59)
@@ -48,7 +43,7 @@ public class ReporteServiceImpl implements ReporteService{
         String formatoInicio = inicio.toString("yyyy-MM-dd HH:mm:ss");
         String formatoFin = fin.toString("yyyy-MM-dd HH:mm:ss");
 
-        List<Reporte> repor = reporteRepository.getHoursByTecnico(consulta.getTecnico_id(), formatoInicio, formatoFin);
+        List<Reporte> repor = reporteRepository.getHoursByTecnico(tecnicoId, formatoInicio, formatoFin);
         HorasSemanales horasSemanales = new HorasSemanales();
         double horasTrabajadasSemana = 0;
         double horasCantidad = 0.0;
