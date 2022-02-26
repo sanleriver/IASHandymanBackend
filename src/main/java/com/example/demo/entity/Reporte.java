@@ -1,7 +1,5 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name = "REPORTE")
 public class Reporte implements Serializable {
+
     @Id
     @Column(name = "reporte_id")
     @JsonProperty("reporte_id")
