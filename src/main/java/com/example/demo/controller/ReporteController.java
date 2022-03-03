@@ -5,6 +5,7 @@ import com.example.demo.entity.Reporte;
 import com.example.demo.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class ReporteController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Reporte reporte){
-        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.save(reporte));
+        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(reporteService.save(reporte));
     }
 
     @GetMapping("/{tecnicoId}/{semana}")

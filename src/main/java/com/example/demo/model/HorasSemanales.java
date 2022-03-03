@@ -16,4 +16,16 @@ public class HorasSemanales {
     private double cantidadHorasNocturnasExtra;
 
     private double cantidadHorasDominicalesExtra;
+
+    public HorasSemanales() {
+    }
+
+    public HorasSemanales(double cantidadHorasNormales, double cantidadHorasNocturnas, double cantidadHorasDominicales, double cantidadHorasNormalesExtra, double cantidadHorasNocturnasExtra, double cantidadHorasDominicalesExtra) {
+        this.cantidadHorasNormales = cantidadHorasNormales;
+        this.cantidadHorasNocturnas = cantidadHorasNocturnas;
+        this.cantidadHorasDominicales = cantidadHorasDominicales;
+        this.cantidadHorasNormalesExtra = cantidadHorasNormalesExtra;
+        this.cantidadHorasNocturnasExtra = cantidadHorasNocturnasExtra;
+        this.cantidadHorasDominicalesExtra = cantidadHorasDominicalesExtra;
+    }
 }

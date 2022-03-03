@@ -18,6 +18,10 @@ public class ReporteServiceImpl implements ReporteService{
     @Autowired
     private ReporteRepository reporteRepository;
 
+    public ReporteServiceImpl(ReporteRepository reporteRepository) {
+        this.reporteRepository = reporteRepository;
+    }
+
     @Override
     @Transactional
     public Reporte save(Reporte reporte) {
@@ -94,7 +98,7 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LA CANTIDAD DE HORAS
                         double horasCantidad = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicales(horasSemanales.getCantidadHorasDominicales()+horasCantidad);
+                        horasSemanales.setCantidadHorasDominicales(Math.round((horasSemanales.getCantidadHorasDominicales()+horasCantidad)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasCantidad;
                         //VALIDAMOS EL PRIMER DÍA ES SÁBADO
@@ -102,7 +106,7 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LAS HORAS DOMINICALES CORRESPONDIENTES
                         double horasDominicales = (double)(repor.get(i).getFecha_hora_fin().getTime() - mediaNoche.getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicales(horasSemanales.getCantidadHorasDominicales()+horasDominicales);
+                        horasSemanales.setCantidadHorasDominicales(Math.round((horasSemanales.getCantidadHorasDominicales()+horasDominicales)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasDominicales;
                         //VALIDAMOS SI TODAS LAS HORAS NO DOMINICALES SON NOCTURNAS
@@ -110,26 +114,43 @@ public class ReporteServiceImpl implements ReporteService{
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = (double)(mediaNoche.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //DECLARAMOS LAS 4 HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = 4;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNormales = (double)(ochoPM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                            horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas + horasNormales;
                         }
+                        //EN CASO DE QUE EL PRIMER DÍA ES DOMINGO Y EL SEGUNDO ES LUNES
                     }else{
+                        //ESTABLECEMOS LAS 7 AM DEL SEGUNDO DIA
+                        mediaNocheCalendar.set(Calendar.YEAR, horaFin.get(Calendar.YEAR));
+                        mediaNocheCalendar.set(Calendar.MONTH, horaFin.get(Calendar.MONTH));
+                        mediaNocheCalendar.set(Calendar.DAY_OF_MONTH, horaFin.get(Calendar.DAY_OF_MONTH));
+                        mediaNocheCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                        mediaNocheCalendar.set(Calendar.MINUTE, 0);
+                        mediaNocheCalendar.set(Calendar.SECOND, 0);
+                        mediaNoche = mediaNocheCalendar.getTime();
+
+                        sieteAMCalendar.set(Calendar.YEAR, horaFin.get(Calendar.YEAR));
+                        sieteAMCalendar.set(Calendar.MONTH, horaFin.get(Calendar.MONTH));
+                        sieteAMCalendar.set(Calendar.DAY_OF_MONTH, horaFin.get(Calendar.DAY_OF_MONTH));
+                        sieteAMCalendar.set(Calendar.HOUR_OF_DAY, 7);
+                        sieteAMCalendar.set(Calendar.MINUTE, 0);
+                        sieteAMCalendar.set(Calendar.SECOND, 0);
+                        sieteAM = sieteAMCalendar.getTime();
                         //CALCULAMOS LAS HORAS DOMINICALES CORRESPONDIENTES
                         double horasDominicales = (double)(mediaNoche.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicales(horasSemanales.getCantidadHorasDominicales()+horasDominicales);
+                        horasSemanales.setCantidadHorasDominicales(Math.round((horasSemanales.getCantidadHorasDominicales()+horasDominicales)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasDominicales;
                         //VALIDAMOS SI TODAS LAS HORAS NO DOMINICALES SON NOCTURNAS
@@ -137,18 +158,18 @@ public class ReporteServiceImpl implements ReporteService{
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - mediaNoche.getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //DECLARAMOS LAS 7 HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = 7;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNormales = (double)(repor.get(i).getFecha_hora_inicio().getTime() - sieteAM.getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                            horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas + horasNormales;
                         }
@@ -162,14 +183,14 @@ public class ReporteServiceImpl implements ReporteService{
                             //CALCULAMOS LAS HORAS NOCTURNAS
                             double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = (double)(sieteAM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                             //VALIDAMOS SI LA HORA FINAL ES DESPUÉS DE LAS 8 PM
@@ -177,18 +198,18 @@ public class ReporteServiceImpl implements ReporteService{
                                 //DECLARAMOS LAS 13 HORAS NORMALES CORRESPONDIENTES
                                 double horasNormales = 13;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                                horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                                horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                                 //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                                 double horasNocturnas2 = (double)(repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime())/(double)3600000;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                                horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas2);
+                                horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas2)*100)/100d);
                                 //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                                 horasTrabajadasSemana += horasNocturnas2 + horasNormales;
                             } else {
                                 //CALCULAMOS LAS HORAS NORMALES CORRESPONDIENTES
                                 double horasNormales = (double)(repor.get(i).getFecha_hora_fin().getTime() - sieteAM.getTime())/(double)3600000;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                                horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                                horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                                 //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                                 horasTrabajadasSemana += horasNormales;
                             }
@@ -198,7 +219,7 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                         double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                        horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                        horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNocturnas;
                         //VALIDAMOS SI LA HORA FINAL ES DESPUÉS DE LAS 8 PM
@@ -206,18 +227,18 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LAS HORAS NORMALES CORRESPONDIENTES
                         double horasNormales = (double)(ochoPM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                        horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                        horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                         //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                         double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                        horasSemanales.setCantidadHorasNocturnas(horasSemanales.getCantidadHorasNocturnas()+horasNocturnas);
+                        horasSemanales.setCantidadHorasNocturnas(Math.round((horasSemanales.getCantidadHorasNocturnas()+horasNocturnas)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNocturnas + horasNormales;
                     } else {
                         //CALCULAMOS LAS HORAS NORMALES
                         double horasNormales = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                        horasSemanales.setCantidadHorasNormales(horasSemanales.getCantidadHorasNormales()+horasNormales);
+                        horasSemanales.setCantidadHorasNormales(Math.round((horasSemanales.getCantidadHorasNormales()+horasNormales)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNormales;
                     }
@@ -231,7 +252,7 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LA CANTIDAD DE HORAS
                         double horasCantidad = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicalesExtra(horasSemanales.getCantidadHorasDominicalesExtra()+horasCantidad);
+                        horasSemanales.setCantidadHorasDominicalesExtra(Math.round((horasSemanales.getCantidadHorasDominicalesExtra()+horasCantidad)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasCantidad;
                         //VALIDAMOS EL PRIMER DÍA ES SÁBADO
@@ -239,7 +260,7 @@ public class ReporteServiceImpl implements ReporteService{
                         //CALCULAMOS LAS HORAS DOMINICALES CORRESPONDIENTES
                         double horasDominicales = (double)(repor.get(i).getFecha_hora_fin().getTime() - mediaNoche.getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicalesExtra(horasSemanales.getCantidadHorasDominicalesExtra()+horasDominicales);
+                        horasSemanales.setCantidadHorasDominicalesExtra(Math.round((horasSemanales.getCantidadHorasDominicalesExtra()+horasDominicales)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasDominicales;
                         //VALIDAMOS SI TODAS LAS HORAS NO DOMINICALES SON NOCTURNAS
@@ -247,26 +268,43 @@ public class ReporteServiceImpl implements ReporteService{
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = (double)(mediaNoche.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //DECLARAMOS LAS 4 HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = 4;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas)*100)/100d);
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNormales = (double)(ochoPM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                            horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra()+horasNormales)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas + horasNormales;
                         }
+                        //EN CASO DE QUE EL PRIMER DÍA ES DOMINGO Y EL SEGUNDO ES LUNES
                     }else{
+                        //ESTABLECEMOS LAS 7 AM DEL SEGUNDO DIA
+                        mediaNocheCalendar.set(Calendar.YEAR, horaFin.get(Calendar.YEAR));
+                        mediaNocheCalendar.set(Calendar.MONTH, horaFin.get(Calendar.MONTH));
+                        mediaNocheCalendar.set(Calendar.DAY_OF_MONTH, horaFin.get(Calendar.DAY_OF_MONTH));
+                        mediaNocheCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                        mediaNocheCalendar.set(Calendar.MINUTE, 0);
+                        mediaNocheCalendar.set(Calendar.SECOND, 0);
+                        mediaNoche = mediaNocheCalendar.getTime();
+
+                        sieteAMCalendar.set(Calendar.YEAR, horaFin.get(Calendar.YEAR));
+                        sieteAMCalendar.set(Calendar.MONTH, horaFin.get(Calendar.MONTH));
+                        sieteAMCalendar.set(Calendar.DAY_OF_MONTH, horaFin.get(Calendar.DAY_OF_MONTH));
+                        sieteAMCalendar.set(Calendar.HOUR_OF_DAY, 7);
+                        sieteAMCalendar.set(Calendar.MINUTE, 0);
+                        sieteAMCalendar.set(Calendar.SECOND, 0);
+                        sieteAM = sieteAMCalendar.getTime();
                         //CALCULAMOS LAS HORAS DOMINICALES CORRESPONDIENTES
                         double horasDominicales = (double)(mediaNoche.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS DOMINICALES
-                        horasSemanales.setCantidadHorasDominicalesExtra(horasSemanales.getCantidadHorasDominicalesExtra()+horasDominicales);
+                        horasSemanales.setCantidadHorasDominicalesExtra(Math.round((horasSemanales.getCantidadHorasDominicalesExtra()+horasDominicales)*100)/100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasDominicales;
                         //VALIDAMOS SI TODAS LAS HORAS NO DOMINICALES SON NOCTURNAS
@@ -274,18 +312,18 @@ public class ReporteServiceImpl implements ReporteService{
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - mediaNoche.getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //DECLARAMOS LAS 7 HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNocturnas = 7;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas)*100)/100d);
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
                             double horasNormales = (double)(repor.get(i).getFecha_hora_inicio().getTime() - sieteAM.getTime())/(double)3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                            horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra()+horasNormales)*100)/100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas + horasNormales;
                         }
@@ -293,73 +331,73 @@ public class ReporteServiceImpl implements ReporteService{
                     //CUANDO NINGUNA DE LAS DOS FECHAS ES DOMINGO
                 } else {
                     //VALIDAMOS SI LA HORA INICIAL ES ANTES DE LAS 7 AM
-                    if (repor.get(i).getFecha_hora_inicio().getTime() < sieteAM.getTime()){
+                    if (repor.get(i).getFecha_hora_inicio().getTime() < sieteAM.getTime()) {
                         //VALIDAMOS SI LA HORA FINAL ES ANTES DE LAS 7 AM
-                        if (repor.get(i).getFecha_hora_fin().getTime() < sieteAM.getTime()){
+                        if (repor.get(i).getFecha_hora_fin().getTime() < sieteAM.getTime()) {
                             //CALCULAMOS LAS HORAS NOCTURNAS
-                            double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
+                            double horasNocturnas = (double) (repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime()) / (double) 3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra() + horasNocturnas) * 100) / 100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                         } else {
                             //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
-                            double horasNocturnas = (double)(sieteAM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
+                            double horasNocturnas = (double) (sieteAM.getTime() - repor.get(i).getFecha_hora_inicio().getTime()) / (double) 3600000;
                             //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                            horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                            horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra() + horasNocturnas) * 100) / 100d);
                             //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                             horasTrabajadasSemana += horasNocturnas;
                             //VALIDAMOS SI LA HORA FINAL ES DESPUÉS DE LAS 8 PM
-                            if (repor.get(i).getFecha_hora_fin().getTime() > ochoPM.getTime()){
+                            if (repor.get(i).getFecha_hora_fin().getTime() > ochoPM.getTime()) {
                                 //DECLARAMOS LAS 13 HORAS NORMALES CORRESPONDIENTES
                                 double horasNormales = 13;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                                horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                                horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra() + horasNormales) * 100) / 100d);
                                 //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
-                                double horasNocturnas2 = (double)(repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime())/(double)3600000;
+                                double horasNocturnas2 = (double) (repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime()) / (double) 3600000;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                                horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas2);
+                                horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra() + horasNocturnas2) * 100) / 100d);
                                 //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                                 horasTrabajadasSemana += horasNocturnas2 + horasNormales;
                             } else {
                                 //CALCULAMOS LAS HORAS NORMALES CORRESPONDIENTES
-                                double horasNormales = (double)(repor.get(i).getFecha_hora_fin().getTime() - sieteAM.getTime())/(double)3600000;
+                                double horasNormales = (double) (repor.get(i).getFecha_hora_fin().getTime() - sieteAM.getTime()) / (double) 3600000;
                                 //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                                horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                                horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra() + horasNormales) * 100) / 100d);
                                 //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                                 horasTrabajadasSemana += horasNormales;
                             }
                         }
                         //VALIDAMOS SI LA HORA INICIAL ES DESPUÉS DE LAS 8 PM
-                    } else if (repor.get(i).getFecha_hora_inicio().getTime() > ochoPM.getTime()){
+                    } else if (repor.get(i).getFecha_hora_inicio().getTime() > ochoPM.getTime()) {
                         //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
-                        double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
+                        double horasNocturnas = (double) (repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime()) / (double) 3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                        horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                        horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra() + horasNocturnas) * 100) / 100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNocturnas;
                         //VALIDAMOS SI LA HORA FINAL ES DESPUÉS DE LAS 8 PM
-                    } else if (repor.get(i).getFecha_hora_inicio().getTime() > ochoPM.getTime()){
+                    } else if (repor.get(i).getFecha_hora_inicio().getTime() > ochoPM.getTime()) {
                         //CALCULAMOS LAS HORAS NORMALES CORRESPONDIENTES
-                        double horasNormales = (double)(ochoPM.getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
+                        double horasNormales = (double) (ochoPM.getTime() - repor.get(i).getFecha_hora_inicio().getTime()) / (double) 3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                        horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                        horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra() + horasNormales) * 100) / 100d);
                         //CALCULAMOS LAS HORAS NOCTURNAS CORRESPONDIENTES
-                        double horasNocturnas = (double)(repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime())/(double)3600000;
+                        double horasNocturnas = (double) (repor.get(i).getFecha_hora_fin().getTime() - ochoPM.getTime()) / (double) 3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NOCTURNAS
-                        horasSemanales.setCantidadHorasNocturnasExtra(horasSemanales.getCantidadHorasNocturnasExtra()+horasNocturnas);
+                        horasSemanales.setCantidadHorasNocturnasExtra(Math.round((horasSemanales.getCantidadHorasNocturnasExtra() + horasNocturnas) * 100) / 100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNocturnas + horasNormales;
                     } else {
                         //CALCULAMOS LAS HORAS NORMALES
-                        double horasNormales = (double)(repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime())/(double)3600000;
+                        double horasNormales = (double) (repor.get(i).getFecha_hora_fin().getTime() - repor.get(i).getFecha_hora_inicio().getTime()) / (double) 3600000;
                         //ASIGNAMOS LA CANTIDAD DE HORAS A HORAS NORMALES
-                        horasSemanales.setCantidadHorasNormalesExtra(horasSemanales.getCantidadHorasNormalesExtra()+horasNormales);
+                        horasSemanales.setCantidadHorasNormalesExtra(Math.round((horasSemanales.getCantidadHorasNormalesExtra() + horasNormales) * 100) / 100d);
                         //SUMAMOS LA CANTIDAD A LAS HORAS TRABAJADAS EN LA SEMANA
                         horasTrabajadasSemana += horasNormales;
                     }
+                    //AQUÍ TERMINA CUANDO LAS HORAS SON EXTRA
                 }
-                //AQUÍ TERMINA CUANDO LAS HORAS SON EXTRA
             }
         }
 
