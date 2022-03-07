@@ -19,7 +19,6 @@ public class Reporte implements Serializable {
 
     @Id
     @Column(name = "reporte_id")
-    @JsonProperty("reporte_id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long reporte_id;
 

@@ -1,48 +1,43 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Reporte;
-import com.example.demo.model.HorasSemanales;
-import com.example.demo.repository.ReporteRepository;
+import com.example.demo.entity.HorasSemanalesTrabajadas;
+import com.example.demo.repository.HorasSemanalesTrabajadasRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
-public class ReporteServiceImpl implements ReporteService{
+public class HorasSemanalesTrabajadasServiceImpl implements HorasSemanalesTrabajadasService{
 
     @Autowired
-    private ReporteRepository reporteRepository;
+    private HorasSemanalesTrabajadasRepository horasSemanalesTrabajadasRepository;
 
-    public ReporteServiceImpl(ReporteRepository reporteRepository) {
-        this.reporteRepository = reporteRepository;
+    @Override
+    public HorasSemanalesTrabajadas save(HorasSemanalesTrabajadas horasSemanalesTrabajas) {
+        return horasSemanalesTrabajadasRepository.save(horasSemanalesTrabajas);
     }
 
     @Override
-    @Transactional
-    public Reporte save(Reporte reporte) {
-        return reporteRepository.save(reporte);
+    public Optional<HorasSemanalesTrabajadas> findById(long id) {
+        return horasSemanalesTrabajadasRepository.findById(id);
     }
 
     @Override
-    public HorasSemanales obtenerReporteHoras(long tecnicoId, int semana) {
-        List<String> fechas = fechasSemana(semana);
+    public HorasSemanalesTrabajadas actualizarHorasSemana(long tecnico_id, String fechaHoraInicial, String fechaHoraFinal) {
+        HorasSemanalesTrabajadas horasSemanalesTrabajadasInicial = new HorasSemanalesTrabajadas();
 
-        List<Reporte> reportesTecnico = reporteRepository.getHoursByTecnico(tecnicoId, fechas.get(0), fechas.get(1));
-        HorasSemanales horasSemanales = new HorasSemanales();
-        double horasTrabajadasSemana = 0.0;
-
-        for (int i=0; i< reportesTecnico.size(); i++){
-            List<Calendar> fechasCalendar = instanciarCalendar(reportesTecnico.get(i).getFecha_hora_inicio(), reportesTecnico.get(i).getFecha_hora_fin());
-
-        }
-
-        return horasSemanales;
+        HorasSemanalesTrabajadas horasSemanalesTrabajadasFinal = horasSemanalesTrabajadasRepository.actualizarRegistroHoras(
+                horasSemanalesTrabajadasInicial.getTecnico_id(),
+                horasSemanalesTrabajadasInicial.getNumero_semana(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasNormales(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasNocturnas(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasDominicales(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasNormalesExtra(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasNocturnasExtra(),
+                horasSemanalesTrabajadasInicial.getCantidadHorasDominicalesExtra());
+        return null;
     }
 
     //ESTA FUNCIÓN PERMITE CALCULAR LA CANTIDAD DE HORAS

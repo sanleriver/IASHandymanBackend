@@ -40,8 +40,8 @@ class DemoApplicationTests {
 		segundo.add(DatosPrueba.REPORTE_004);
 		when(reporteRepository.getHoursByTecnico(456789L, "2022-02-21 00:00:00", "2022-02-27 23:59:59")).thenReturn(segundo);
 
-		HorasSemanales horasSemanales123456 = reporteService.getHoursReport(123456L, 7);
-		HorasSemanales horasSemanales456789 = reporteService.getHoursReport(456789L, 8);
+		HorasSemanales horasSemanales123456 = reporteService.obtenerReporteHoras(123456L, 7);
+		HorasSemanales horasSemanales456789 = reporteService.obtenerReporteHoras(456789L, 8);
 
 		assertEquals(new HorasSemanales(1,2,0,0,0,0), horasSemanales123456);
 		assertEquals(new HorasSemanales(1.87,1.37,0.8,0,0,0), horasSemanales456789);

@@ -59,7 +59,7 @@ class ReporteControllerTest {
 
     @Test
     void hoursReport() throws Exception {
-        when(reporteService.getHoursReport(123456L, 7)).thenReturn(horasSemanales);
+        when(reporteService.obtenerReporteHoras(123456L, 7)).thenReturn(horasSemanales);
 
         //When
         mvc.perform(get("/api/reporte/123456/7").contentType(MediaType.APPLICATION_JSON))
@@ -67,6 +67,6 @@ class ReporteControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.cantidadHorasNormales").value(1));
 
-        verify(reporteService).getHoursReport(123456L,7);
+        verify(reporteService).obtenerReporteHoras(123456L,7);
     }
 }

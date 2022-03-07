@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.Consulta;
 import com.example.demo.entity.Reporte;
+import com.example.demo.model.HorasSemanales;
 import com.example.demo.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class ReporteController {
     }
 
     @GetMapping("/{tecnicoId}/{semana}")
-    public ResponseEntity<?> hoursReport(@PathVariable long tecnicoId, @PathVariable int semana){
-        return ResponseEntity.status(HttpStatus.OK).body(reporteService.getHoursReport(tecnicoId, semana));
+    public ResponseEntity<HorasSemanales> hoursReport(@PathVariable long tecnicoId, @PathVariable int semana){
+        return ResponseEntity.status(HttpStatus.OK).body(reporteService.obtenerReporteHoras(tecnicoId, semana));
     }
 }

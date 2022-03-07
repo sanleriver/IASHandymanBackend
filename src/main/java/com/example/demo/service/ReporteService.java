@@ -10,5 +10,5 @@ public interface ReporteService {
 
     public Reporte save(Reporte reporte);
 
-    public HorasSemanales getHoursReport(long tecnicoId, int semana);
+    public HorasSemanales obtenerReporteHoras(long tecnicoId, int semana);
 }
