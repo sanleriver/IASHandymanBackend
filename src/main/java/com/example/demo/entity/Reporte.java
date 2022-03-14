@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity
 @Data
@@ -35,10 +35,10 @@ public class Reporte implements Serializable {
     @Column(name = "fecha_hora_inicio")
     @JsonProperty("fecha_hora_inicio")
     @NonNull
-    private Date fecha_hora_inicio;
+    private LocalDateTime fecha_hora_inicio;
 
     @Column(name = "fecha_hora_fin")
     @JsonProperty("fecha_hora_fin")
     @NonNull
-    private Date fecha_hora_fin;
+    private LocalDateTime fecha_hora_fin;
 }
